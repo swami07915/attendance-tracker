@@ -2,8 +2,7 @@ import openpyxl
 import smtplib
 wb=openpyxl.load_workbook("sample_workbook.xlsx")
 sheet=wb.active
-# for row in sheet.iter_rows(min_row=1, max_row=4, values_only=True):
-#     print(row)
+
 
 cellvalue=0
 n=2
@@ -63,32 +62,3 @@ while o<5:
                 msg="Subject:last reminder\n\nyou have taken 2 leaves this mouths in chem lec if you get aone more leave you will be officially can not give mse exam, this is your last reminder."
             )
     o+=1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# wb.save("sample_workbook.xlsx")
-# with smtplib.SMTP("smtp.gmail.com") as email:
-#     email.starttls()
-#     email.login(user="rudrakshswami931@gmail.com",password="znoa qoyp uzoh lshk")
-#     email.sendmail(
-#         from_addr="rudrakshswami931@gmail.com",
-#         to_addrs="rudrakshdswami@gmail.com",
-#         msg="Subject:about your attendance\n\nyou have taken 2 leaves this mouths if you get aone more leave you will be officially can not give mse exam, this is your last reminder."
-#     )
-
