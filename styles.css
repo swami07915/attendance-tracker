@@ -1,0 +1,307 @@
+/* ============ SHERU BHAI — luxury gold on black ============ */
+
+:root {
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.45);
+  --gold-glow: rgba(212, 175, 55, 0.25);
+  --ink: #000;
+  --mx: 50vw;
+  --my: 50vh;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: #f3e6c3;
+  font-family: Georgia, "Times New Roman", "Noto Serif", serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+img { display: block; max-width: 100%; }
+
+/* ---------- Layer 0: money wallpaper ---------- */
+.money {
+  position: fixed;
+  inset: -4%;
+  z-index: 0;
+  background: url("assets/money-wallpaper.jpg") center / cover no-repeat;
+  transform: translate3d(
+    calc(var(--mx) * -0.012),
+    calc(var(--my) * -0.012),
+    0
+  ) scale(1.04);
+  will-change: transform;
+}
+
+/* ---------- Layer 1: black veil (canvas) ---------- */
+#veil {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---------- Content sits above the veil ---------- */
+header, main, footer { position: relative; z-index: 2; }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px clamp(18px, 4vw, 48px);
+}
+
+.nav__crest {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  mix-blend-mode: screen; /* black box disappears over reveal */
+}
+
+.nav__name {
+  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  letter-spacing: 0.42em;
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 0 18px var(--gold-glow);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.hero__title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  z-index: 1;                 /* behind the figure */
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero__title span {
+  font-size: clamp(3.4rem, 13vw, 11rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 0.92;
+  background: linear-gradient(
+    100deg,
+    #8a6d1f 0%,
+    #f9e89b 22%,
+    #d4af37 40%,
+    #fff6d0 52%,
+    #d4af37 64%,
+    #a8842a 82%,
+    #f5e7a3 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 26px rgba(0, 0, 0, 0.75));
+  animation: shimmer 7s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+
+.hero__figure {
+  position: relative;
+  z-index: 2;
+  width: min(78vw, 560px);
+  animation: float 5.5s ease-in-out infinite;
+}
+
+.hero__figure img {
+  width: 100%;
+  height: auto;
+  /* soft fade where the crop ends — the bust dissolves into the dark */
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 82%, transparent 99%);
+  filter: drop-shadow(0 18px 50px rgba(0, 0, 0, 0.85))
+          drop-shadow(0 0 34px var(--gold-glow));
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+.hero__hint {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  white-space: nowrap;
+  font-size: clamp(0.78rem, 1.4vw, 0.95rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+  transition: opacity 0.9s ease, transform 0.9s ease;
+  text-shadow: 0 0 16px rgba(0, 0, 0, 0.9);
+}
+
+.hero__hint.is-hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+}
+
+/* ---------- Gold dust ---------- */
+.hero__dust {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero__dust i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f9e89b, rgba(212, 175, 55, 0));
+  opacity: 0.55;
+  animation: drift 14s linear infinite;
+}
+
+.hero__dust i:nth-child(1) { left: 8%;  top: 70%; animation-duration: 13s; }
+.hero__dust i:nth-child(2) { left: 18%; top: 40%; animation-duration: 17s; animation-delay: -4s; width: 8px; height: 8px; }
+.hero__dust i:nth-child(3) { left: 30%; top: 85%; animation-duration: 15s; animation-delay: -8s; }
+.hero__dust i:nth-child(4) { left: 45%; top: 60%; animation-duration: 19s; animation-delay: -2s; width: 4px; height: 4px; }
+.hero__dust i:nth-child(5) { left: 60%; top: 78%; animation-duration: 14s; animation-delay: -6s; }
+.hero__dust i:nth-child(6) { left: 72%; top: 45%; animation-duration: 18s; animation-delay: -11s; width: 7px; height: 7px; }
+.hero__dust i:nth-child(7) { left: 84%; top: 66%; animation-duration: 16s; animation-delay: -3s; }
+.hero__dust i:nth-child(8) { left: 92%; top: 30%; animation-duration: 20s; animation-delay: -9s; width: 4px; height: 4px; }
+
+@keyframes drift {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  12%  { opacity: 0.6; }
+  88%  { opacity: 0.6; }
+  100% { transform: translateY(-70vh) translateX(30px); opacity: 0; }
+}
+
+/* ---------- Legend section ---------- */
+.legend {
+  padding: clamp(60px, 10vh, 110px) clamp(18px, 5vw, 60px);
+  text-align: center;
+}
+
+.legend__heading {
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  margin-bottom: clamp(30px, 5vh, 54px);
+  text-shadow: 0 0 24px var(--gold-glow);
+}
+
+.legend__cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 34px);
+}
+
+.card {
+  min-width: min(78vw, 250px);
+  padding: 34px 30px 30px;
+  border: 1px solid var(--gold-soft);
+  border-radius: 6px;
+  background:
+    linear-gradient(160deg, rgba(212, 175, 55, 0.10), rgba(212, 175, 55, 0.02) 55%, transparent);
+  box-shadow: inset 0 0 40px rgba(212, 175, 55, 0.06),
+              0 10px 40px rgba(0, 0, 0, 0.6);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold);
+  box-shadow: inset 0 0 40px rgba(212, 175, 55, 0.12),
+              0 18px 50px rgba(0, 0, 0, 0.7),
+              0 0 30px var(--gold-glow);
+}
+
+.card__label {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.34em;
+  color: rgba(243, 230, 195, 0.72);
+  margin-bottom: 16px;
+}
+
+.card__value {
+  display: block;
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: linear-gradient(180deg, #fff6d0, #d4af37 55%, #8a6d1f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 46px 20px 40px;
+  border-top: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.footer__crest {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  mix-blend-mode: screen;      /* blends into black / reveal alike */
+}
+
+.footer__name {
+  letter-spacing: 0.42em;
+  font-size: 0.95rem;
+  color: var(--gold);
+}
+
+.footer__copy {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: rgba(243, 230, 195, 0.55);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .hero__figure { width: min(88vw, 430px); }
+  .nav__crest { width: 42px; height: 42px; }
+  .hero__hint { letter-spacing: 0.16em; bottom: 22px; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero__title span, .hero__figure, .hero__dust i { animation: none; }
+}

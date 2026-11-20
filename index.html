@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHERU BHAI 🦁</title>
+  <meta name="description" content="The official fan page of Sheru Bhai — Nashik's own lion in a white suit." />
+  <link rel="icon" href="assets/gold-crest.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Layer 0: money wallpaper (revealed by cursor) -->
+  <div class="money" aria-hidden="true"></div>
+
+  <!-- Layer 1: black veil — canvas that the cursor erases -->
+  <canvas id="veil" aria-hidden="true"></canvas>
+
+  <!-- Layer 2: page content -->
+  <header class="nav">
+    <img class="nav__crest" src="assets/gold-crest.png" alt="Sheru Bhai crest" />
+    <span class="nav__name">SHERU BHAI</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 class="hero__title" aria-label="SHERU BHAI">
+        <span>SHERU</span><span>BHAI</span>
+      </h1>
+
+      <div class="hero__figure">
+        <img src="assets/sheru-figure.png" alt="Sheru Bhai — the white lion in a white suit" />
+      </div>
+
+      <p class="hero__hint" id="hint">Move your cursor to reveal the wealth&nbsp;💰</p>
+
+      <div class="hero__dust" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </section>
+
+    <section class="legend">
+      <h2 class="legend__heading">THE LEGEND</h2>
+      <div class="legend__cards">
+        <article class="card">
+          <span class="card__label">SWAG LEVEL</span>
+          <span class="card__value">∞</span>
+        </article>
+        <article class="card">
+          <span class="card__label">GOLD CHAINS</span>
+          <span class="card__value">24K</span>
+        </article>
+        <article class="card">
+          <span class="card__label">STATUS</span>
+          <span class="card__value">ROYAL</span>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img class="footer__crest" src="assets/gold-crest.png" alt="" />
+    <span class="footer__name">SHERU BHAI</span>
+    <span class="footer__copy">© 2026 · Nashik ka Sher 🦁</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
