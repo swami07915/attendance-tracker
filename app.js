@@ -23,7 +23,8 @@
 
     if (!moved) {
       moved = true;
-      hint.classList.add("is-hidden");
+      if (hint) hint.classList.add("is-hidden");
+      clearTimeout(demoTimer); // real input cancels the demo forever
     }
 
     money.classList.add("is-on");
@@ -37,6 +38,28 @@
   ["pointermove", "pointerdown", "mousemove", "touchstart", "touchmove"].forEach(
     (type) => window.addEventListener(type, onPointer, { passive: true })
   );
+
+  // Safety net: if the environment never delivers a single pointer event
+  // (some embedded previews swallow them), run ONE gentle demo sweep so the
+  // effect is still visible. Any real input cancels it.
+  const demoTimer = setTimeout(() => {
+    if (moved) return;
+    const t0 = performance.now();
+    const dur = 4200;
+    function sweep(now) {
+      if (moved) return; // user took over — hand control back
+      const p = Math.min(1, (now - t0) / dur);
+      target.x = window.innerWidth * (0.25 + 0.5 * p);
+      target.y = window.innerHeight * (0.45 + 0.14 * Math.sin(p * Math.PI * 2));
+      money.classList.add("is-on");
+      if (p < 1) {
+        requestAnimationFrame(sweep);
+      } else {
+        money.classList.remove("is-on"); // fade back to black
+      }
+    }
+    requestAnimationFrame(sweep);
+  }, 6000);
 
   // smooth spotlight follow
   function frame() {
