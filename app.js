@@ -1,6 +1,6 @@
-/* SHERU BHAI — black screen; the cursor is a small brush that paints the
-   money wallpaper onto the background. Everything disappears (fades back
-   to full black) exactly 1 second after the cursor stops. */
+/* SHERU BHAI — luxury penthouse base background; the cursor is a small
+   aesthetic brush that paints the money wallpaper onto the scene.
+   The reveal vanishes in milliseconds (~0.3s) after the cursor stops. */
 
 (() => {
   const money = document.querySelector(".money");
@@ -15,6 +15,15 @@
     ctx = null;
   }
 
+  // base background image — the penthouse replaces the old black screen
+  const bgImg = new Image();
+  let bgReady = false;
+  bgImg.onload = () => {
+    bgReady = true;
+    fillBase();
+  };
+  bgImg.src = "assets/penthouse-bg.jpg";
+
   let w = 0, h = 0, dpr = 1;
   let last = null;        // last brush point
   let active = false;     // money currently showing
@@ -24,29 +33,36 @@
   let demoTimer = null;
   let demoRaf = 0;
 
-  const HIDE_DELAY = 400; // stop -> start fading after 0.4s…
-  const FADE_MS = 600;    // …css fade 0.6s = fully black 1s after last move
+  const HIDE_DELAY = 80;  // stop -> start fading almost immediately…
+  const FADE_MS = 220;    // …css fade 0.22s = gone in ~0.3s (milliseconds-fast)
 
   function brushRadius() {
-    return Math.max(36, Math.min(w, h) * 0.05); // a brush, not a big dot
+    return Math.max(26, Math.min(w, h) * 0.034); // small aesthetic brush
   }
 
-  function fillBlack() {
+  // draw the penthouse image "cover"-style, matching the CSS body background
+  function drawCover(img) {
+    const s = Math.max(w / img.width, h / img.height);
+    const dw = img.width * s;
+    const dh = img.height * s;
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  }
+
+  // repaint the whole veil (penthouse, no strokes) — the "closed" state
+  function fillBase() {
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, w, h);
+    if (bgReady) {
+      drawCover(bgImg);
+    } else {
+      ctx.fillStyle = "#000"; // momentary fallback until the image loads
+      ctx.fillRect(0, 0, w, h);
+    }
   }
 
   function resize() {
     if (!ctx || !canvas) return;
-    const prev = document.createElement("canvas");
-    if (canvas.width && canvas.height) {
-      prev.width = canvas.width;
-      prev.height = canvas.height;
-      prev.getContext("2d").drawImage(canvas, 0, 0);
-    }
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = window.innerWidth;
     h = window.innerHeight;
@@ -55,23 +71,18 @@
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (prev.width) {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.drawImage(prev, 0, 0, canvas.width, canvas.height);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    } else {
-      fillBlack();
-    }
+    fillBase();
     last = null;
   }
 
-  // one soft brush dab (destination-out punches a hole in the black veil)
+  // one soft airbrush dab (destination-out punches through the veil)
   function dab(x, y) {
     if (!ctx) return;
     const r = brushRadius();
-    const g = ctx.createRadialGradient(x, y, r * 0.5, x, y, r);
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
     g.addColorStop(0, "rgba(0,0,0,1)");
-    g.addColorStop(0.75, "rgba(0,0,0,0.85)");
+    g.addColorStop(0.45, "rgba(0,0,0,0.85)");
+    g.addColorStop(0.75, "rgba(0,0,0,0.4)");
     g.addColorStop(1, "rgba(0,0,0,0)");
     ctx.globalCompositeOperation = "destination-out";
     ctx.fillStyle = g;
@@ -87,7 +98,7 @@
       const dx = x - last.x;
       const dy = y - last.y;
       const dist = Math.hypot(dx, dy);
-      const steps = Math.max(1, Math.ceil(dist / (brushRadius() * 0.4)));
+      const steps = Math.max(1, Math.ceil(dist / (brushRadius() * 0.35)));
       for (let i = 1; i <= steps; i++) {
         dab(last.x + (dx * i) / steps, last.y + (dy * i) / steps);
       }
@@ -110,11 +121,11 @@
     clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
       active = false;
-      money.classList.remove("is-on"); // fades to black over 0.6s
+      money.classList.remove("is-on"); // fades out over 0.22s
       clearTimer = setTimeout(() => {
         if (!active) {
-          fillBlack();  // once fully invisible, reset the canvas…
-          last = null;  // …so the next stroke starts clean
+          fillBase();  // once invisible, close the strokes…
+          last = null; // …so the next stroke starts clean
         }
       }, FADE_MS + 60);
     }, HIDE_DELAY);

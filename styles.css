@@ -12,7 +12,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--ink);
+  background: #000 url("assets/penthouse-bg.jpg") center / cover no-repeat fixed;
   color: #f3e6c3;
   font-family: Georgia, "Times New Roman", "Noto Serif", serif;
   overflow-x: hidden;
@@ -28,13 +28,13 @@ img { display: block; max-width: 100%; }
   z-index: 0;
   background: url("assets/money-wallpaper.jpg") center / cover no-repeat;
   opacity: 0;
-  transition: opacity 0.6s ease;              /* fully black 1s after you stop */
+  transition: opacity 0.22s ease;             /* gone ~0.3s after you stop */
   will-change: opacity;
 }
 
 .money.is-on {
   opacity: 1;
-  transition: opacity 0.15s ease;             /* snaps on while painting */
+  transition: opacity 0.08s ease;             /* snaps on while painting */
 }
 
 /* ---------- Layer 1: black veil the brush paints through ---------- */
