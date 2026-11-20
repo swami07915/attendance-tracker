@@ -6,6 +6,8 @@
   const root = document.documentElement;
   const hint = document.getElementById("hint");
 
+  if (!money || !root) return; // never crash on a stale/mismatched DOM
+
   const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const cur = { x: target.x, y: target.y };
 
@@ -31,8 +33,10 @@
     }, HIDE_DELAY);
   }
 
-  window.addEventListener("pointermove", onPointer, { passive: true });
-  window.addEventListener("pointerdown", onPointer, { passive: true });
+  // every flavor of movement — pointer, mouse and touch all count
+  ["pointermove", "pointerdown", "mousemove", "touchstart", "touchmove"].forEach(
+    (type) => window.addEventListener(type, onPointer, { passive: true })
+  );
 
   // smooth spotlight follow
   function frame() {
