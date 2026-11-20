@@ -23,28 +23,33 @@ body {
 
 img { display: block; max-width: 100%; }
 
-/* ---------- Layer 0: money wallpaper ---------- */
+/* ---------- Layer 0: money wallpaper — background only,
+   revealed in a spotlight under the cursor, fades back to black ---------- */
 .money {
   position: fixed;
-  inset: -4%;
+  inset: 0;
   z-index: 0;
   background: url("assets/money-wallpaper.jpg") center / cover no-repeat;
-  transform: translate3d(
-    calc(var(--mx) * -0.012),
-    calc(var(--my) * -0.012),
-    0
-  ) scale(1.04);
-  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.8s ease;              /* full black 2s after you stop */
+  -webkit-mask-image: radial-gradient(
+    circle at var(--mx) var(--my),
+    #000 0,
+    #000 20vmax,
+    transparent 34vmax
+  );
+  mask-image: radial-gradient(
+    circle at var(--mx) var(--my),
+    #000 0,
+    #000 20vmax,
+    transparent 34vmax
+  );
+  will-change: opacity;
 }
 
-/* ---------- Layer 1: black veil (canvas) ---------- */
-#veil {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+.money.is-on {
+  opacity: 1;
+  transition: opacity 0.25s ease;             /* snaps on while moving */
 }
 
 /* ---------- Content sits above the veil ---------- */

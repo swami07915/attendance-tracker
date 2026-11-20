@@ -1,114 +1,47 @@
-/* SHERU BHAI — black screen until the mouse reveals the wealth */
+/* SHERU BHAI — black screen; mouse reveals the money in the background,
+   then everything fades back to black 2 seconds after the mouse stops. */
 
 (() => {
-  const canvas = document.getElementById("veil");
-  const ctx = canvas.getContext("2d");
+  const money = document.querySelector(".money");
   const root = document.documentElement;
   const hint = document.getElementById("hint");
 
-  let dpr = Math.min(window.devicePixelRatio || 1, 2);
-  let w = 0, h = 0;
-  let last = null;          // last erase point (css px)
-  let moved = false;        // nothing reveals until the first pointer move
-
-  // target = where the reveal should be; cur = smoothed position
   const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const cur = { x: target.x, y: target.y };
 
-  function fillVeil() {
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, w, h);
-  }
+  let hideTimer = null;
+  let moved = false;
 
-  function resize() {
-    const prev = document.createElement("canvas");
-    if (canvas.width && canvas.height) {
-      prev.width = canvas.width;
-      prev.height = canvas.height;
-      prev.getContext("2d").drawImage(canvas, 0, 0);
-    }
-
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = window.innerWidth;
-    h = window.innerHeight;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    if (prev.width && moved) {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.drawImage(prev, 0, 0, canvas.width, canvas.height);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    } else {
-      fillVeil();          // always start (or stay) solid black until mouse moves
-    }
-    last = null;
-  }
-
-  // erase a soft circular hole (destination-out punches through the black)
-  function erase(x, y, radius) {
-    const g = ctx.createRadialGradient(x, y, radius * 0.45, x, y, radius);
-    g.addColorStop(0, "rgba(0,0,0,1)");
-    g.addColorStop(0.7, "rgba(0,0,0,0.85)");
-    g.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalCompositeOperation = "source-over";
-  }
-
-  function radius() {
-    return Math.max(150, Math.min(w, h) * 0.24); // big juicy reveal
-  }
+  const HIDE_DELAY = 1200; // ms of stillness before the fade-out starts…
+  // …plus the 0.8s CSS fade = money gone exactly 2s after last movement
 
   function onPointer(e) {
     target.x = e.clientX;
     target.y = e.clientY;
+
     if (!moved) {
       moved = true;
-      last = null;          // begin painting the reveal at the cursor
       hint.classList.add("is-hidden");
     }
+
+    money.classList.add("is-on");
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      money.classList.remove("is-on"); // fades back to black over 0.8s
+    }, HIDE_DELAY);
   }
 
   window.addEventListener("pointermove", onPointer, { passive: true });
   window.addEventListener("pointerdown", onPointer, { passive: true });
-  window.addEventListener("resize", resize);
 
+  // smooth spotlight follow
   function frame() {
-    if (moved) {
-      // smooth follow
-      cur.x += (target.x - cur.x) * 0.08;
-      cur.y += (target.y - cur.y) * 0.08;
-
-      const r = radius();
-      if (last) {
-        // interpolate so fast sweeps don't leave gaps
-        const dx = cur.x - last.x;
-        const dy = cur.y - last.y;
-        const dist = Math.hypot(dx, dy);
-        const steps = Math.max(1, Math.ceil(dist / (r * 0.35)));
-        for (let i = 1; i <= steps; i++) {
-          erase(last.x + (dx * i) / steps, last.y + (dy * i) / steps, r);
-        }
-      } else {
-        erase(cur.x, cur.y, r);
-      }
-      last = { x: cur.x, y: cur.y };
-
-      // feed CSS vars (money parallax follows the cursor)
-      root.style.setProperty("--mx", cur.x.toFixed(1) + "px");
-      root.style.setProperty("--my", cur.y.toFixed(1) + "px");
-    }
-
+    cur.x += (target.x - cur.x) * 0.14;
+    cur.y += (target.y - cur.y) * 0.14;
+    root.style.setProperty("--mx", cur.x.toFixed(1) + "px");
+    root.style.setProperty("--my", cur.y.toFixed(1) + "px");
     requestAnimationFrame(frame);
   }
 
-  resize();
   requestAnimationFrame(frame);
 })();
