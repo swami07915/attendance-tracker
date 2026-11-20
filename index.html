@@ -9,8 +9,11 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Layer 0: money wallpaper (revealed by cursor) -->
+  <!-- Layer 0: money wallpaper (revealed by the cursor brush) -->
   <div class="money" aria-hidden="true"></div>
+
+  <!-- Layer 1: black veil the cursor brush paints through -->
+  <canvas id="veil" aria-hidden="true"></canvas>
 
   <!-- Layer 2: page content (black body = the default background) -->
   <header class="nav">
