@@ -1,4 +1,4 @@
-/* SHERU BHAI — cursor reveals the wealth through the black veil */
+/* SHERU BHAI — black screen until the mouse reveals the wealth */
 
 (() => {
   const canvas = document.getElementById("veil");
@@ -9,11 +9,10 @@
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
   let w = 0, h = 0;
   let last = null;          // last erase point (css px)
-  let moved = false;
-  let lastMove = performance.now();
+  let moved = false;        // nothing reveals until the first pointer move
 
   // target = where the reveal should be; cur = smoothed position
-  const target = { x: window.innerWidth / 2, y: window.innerHeight * 0.45 };
+  const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const cur = { x: target.x, y: target.y };
 
   function fillVeil() {
@@ -39,12 +38,12 @@
     canvas.style.height = h + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    if (prev.width) {
+    if (prev.width && moved) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.drawImage(prev, 0, 0, canvas.width, canvas.height);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     } else {
-      fillVeil();
+      fillVeil();          // always start (or stay) solid black until mouse moves
     }
     last = null;
   }
@@ -70,9 +69,9 @@
   function onPointer(e) {
     target.x = e.clientX;
     target.y = e.clientY;
-    lastMove = performance.now();
     if (!moved) {
       moved = true;
+      last = null;          // begin painting the reveal at the cursor
       hint.classList.add("is-hidden");
     }
   }
@@ -81,37 +80,31 @@
   window.addEventListener("pointerdown", onPointer, { passive: true });
   window.addEventListener("resize", resize);
 
-  function frame(now) {
-    // idle: let the reveal drift on its own (figure-8 path) so touch /
-    // no-cursor visitors still see the money
-    if (now - lastMove > 2600) {
-      target.x = w * (0.5 + 0.34 * Math.sin(now / 3200));
-      target.y = h * (0.48 + 0.30 * Math.sin(now / 2100));
-      if (!moved && now > 3200) hint.classList.add("is-hidden");
-    }
+  function frame() {
+    if (moved) {
+      // smooth follow
+      cur.x += (target.x - cur.x) * 0.08;
+      cur.y += (target.y - cur.y) * 0.08;
 
-    // smooth follow
-    cur.x += (target.x - cur.x) * 0.08;
-    cur.y += (target.y - cur.y) * 0.08;
-
-    const r = radius();
-    if (last) {
-      // interpolate so fast sweeps don't leave gaps
-      const dx = cur.x - last.x;
-      const dy = cur.y - last.y;
-      const dist = Math.hypot(dx, dy);
-      const steps = Math.max(1, Math.ceil(dist / (r * 0.35)));
-      for (let i = 1; i <= steps; i++) {
-        erase(last.x + (dx * i) / steps, last.y + (dy * i) / steps, r);
+      const r = radius();
+      if (last) {
+        // interpolate so fast sweeps don't leave gaps
+        const dx = cur.x - last.x;
+        const dy = cur.y - last.y;
+        const dist = Math.hypot(dx, dy);
+        const steps = Math.max(1, Math.ceil(dist / (r * 0.35)));
+        for (let i = 1; i <= steps; i++) {
+          erase(last.x + (dx * i) / steps, last.y + (dy * i) / steps, r);
+        }
+      } else {
+        erase(cur.x, cur.y, r);
       }
-    } else {
-      erase(cur.x, cur.y, r);
-    }
-    last = { x: cur.x, y: cur.y };
+      last = { x: cur.x, y: cur.y };
 
-    // feed CSS vars (parallax + gradient focus)
-    root.style.setProperty("--mx", cur.x.toFixed(1) + "px");
-    root.style.setProperty("--my", cur.y.toFixed(1) + "px");
+      // feed CSS vars (money parallax follows the cursor)
+      root.style.setProperty("--mx", cur.x.toFixed(1) + "px");
+      root.style.setProperty("--my", cur.y.toFixed(1) + "px");
+    }
 
     requestAnimationFrame(frame);
   }
